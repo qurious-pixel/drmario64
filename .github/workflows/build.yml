@@ -82,7 +82,7 @@ jobs:
           ./N64Recomp drmario64.us.toml
           ./RSPRecomp aspMain.us.toml
       - name: Build DrMario64
-        run: >-
+        run: |-
           # enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
                       

@@ -54,7 +54,7 @@ jobs:
           cp build/us/drmario64.us.elf ..
       - name: Build N64Recomp & RSPRecomp
         if: runner.os != 'Windows'
-        run: >
+        run: |
           git clone https://github.com/Mr-Wiseguy/N64Recomp.git --recurse-submodules
           N64RecompSource
           cd N64RecompSource

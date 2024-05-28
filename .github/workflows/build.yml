@@ -41,14 +41,15 @@ jobs:
           sudo make install
           sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
           echo ::endgroup::
-      - name: Clone MMret
+      - name: Clone DrMario_decomp
         run: |-
           git clone https://github.com/AngheloAlf/drmario64 drmario64_decomp
           cd drmario64_decomp
           curl -sSfL ${{ secrets.BASEROM }} -o baserom.us.z64
           md5sum baserom.us.z64
           python3 -m pip install --no-cache-dir -r requirements.txt
-          CC_CHECK_COMP='ccache gcc' make init
+          cargo install pigment64 --version ">=0.3.0,<1.*"
+          make setup && make lib && make extract && make
           cp build/us/drmario64_uncompressed.us.z64 ..
           cp build/us/drmario64.us.elf ..
       - name: Build N64Recomp & RSPRecomp

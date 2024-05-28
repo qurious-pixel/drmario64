@@ -3,6 +3,6 @@ Name=DrMario64
 Type=Application
 Terminal=false
 Icon=DrMario64
-Exec=drmario64recompiled
+Exec=DrMario64
 GenericName=DrMario64
 Categories=Game;

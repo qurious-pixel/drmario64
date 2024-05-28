@@ -87,6 +87,22 @@ jobs:
         run: >
           ls .
           ls cmake-build
-          #mv cmake-build/DrMario64Recompiled DrMario64Recompiled
+          #mv cmake-build/DrMario64 DrMario64
           #rm -rf assets/scss
           #tar -czf DrMario64Recompiled-${{ runner.os }}-${{ matrix.type }}.tar.gz DrMario64Recompiled assets/
+      #- name: Archive DrMario64
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: DrMario64-${{ runner.os }}-${{ matrix.type }}
+      #    path: DrMario64-${{ runner.os }}-${{ matrix.type }}.tar.gz
+
+      #- name: Build DrMario64
+      #  run: |-
+      #    chmod +x .github/linux/appimage.sh
+      #    ./.github/linux/appimage.sh
+          
+      #- name: DrMario64 AppImage
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: DrMario64-AppImage
+      #    path: DrMario64-x86_64.AppImage

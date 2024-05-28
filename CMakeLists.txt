@@ -268,7 +268,7 @@ target_link_libraries(drmario64_recomp PRIVATE
     RecompiledFuncs
     SDL2
     rt64
-    RmlCore
+#    RmlCore
     rmlui
 #     RmlDebugger
     rmlui_debugger

@@ -93,10 +93,10 @@ jobs:
           cmake --build cmake-build --parallel
       - name: Prepare Archive
         run: |
+          mv cmake-build/drmario64_recomp DrMario64
           ls .
-          mv drmario64_recomp DrMario64
           rm -rf assets/scss
-          tar -czf DrMario64Recompiled-${{ runner.os }}-${{ matrix.type }}.tar.gz DrMario64Recompiled assets/
+          tar -czf DrMario64-${{ runner.os }}-${{ matrix.type }}.tar.gz DrMario64 assets/
       - name: Archive DrMario64
         uses: actions/upload-artifact@v4
         with:

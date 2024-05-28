@@ -49,11 +49,15 @@ jobs:
           sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
           echo ::endgroup::
       - name: Clone DrMario_decomp
-        run: |-
+        run: |
           git clone https://github.com/AngheloAlf/drmario64 drmario64_decomp
           cd drmario64_decomp
           # Enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          #if [[ ! -e ~/.ccache/baserom.us.z64 ]]; then
+          #  curl -sSfL ${{ secrets.BASEROM }} -o ~/.ccache/baserom.us.z64
+			    #  md5sum baserom.us.z64
+          #fi
           ls ~/.ccache
           #curl -sSfL ${{ secrets.BASEROM }} -o baserom.us.z64
           #md5sum baserom.us.z64

@@ -45,7 +45,7 @@ jobs:
               make -j8 && cd ../
               rm SDL2-${SDLVER}.tar.gz
           fi
-          make -C SDL2-${SDLVER} install
+          sudo make -C SDL2-${SDLVER} install
           sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
           echo ::endgroup::
       - name: Clone DrMario_decomp

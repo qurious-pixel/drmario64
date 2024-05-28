@@ -36,14 +36,15 @@ jobs:
           if [[ ! -e ~/.ccache ]]; then
               mkdir ~/.ccache
           fi
-          cd ~/.ccache 
+          cd ~/.ccache
+          ls ~/.ccache
           if [[ ! -e SDL2-${SDLVER} ]]; then
           	curl -sSLO https://libsdl.org/release/SDL2-${SDLVER}.tar.gz
           	tar -xzf SDL2-${SDLVER}.tar.gz
           	cd SDL2-${SDLVER}
-              ./configure
-              make -j8 && cd ../
-              rm SDL2-${SDLVER}.tar.gz
+           	./configure
+          	make -j8 && cd ../
+            rm SDL2-${SDLVER}.tar.gz
           fi
           sudo make -C SDL2-${SDLVER} install
           sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
@@ -56,7 +57,7 @@ jobs:
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           if [[ ! -e ~/.ccache/baserom.us.z64 ]]; then
               curl -sSfL ${{ secrets.BASEROM }} -o ~/.ccache/baserom.us.z64
-              md5sum baserom.us.z64
+              md5sum ~/.ccache/baserom.us.z64
           fi
           ls ~/.ccache
           cp ~/.ccache/baserom.us.z64 .

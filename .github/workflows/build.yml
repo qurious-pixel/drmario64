@@ -1,13 +1,13 @@
-name: validate
+name: build
 on:
-  push:
-
+  push: null
 jobs:
   build-unix:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        type: [ Release ]
+        type:
+          - Release
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,10 +21,9 @@ jobs:
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
         run: >
-          sudo apt-get update &&
-          sudo apt install -y ninja-build libgtk-3-dev lld llvm clang-15 libfreetype-dev libfuse2 libsdl2-dev
+          sudo apt-get update && sudo apt install -y ninja-build libgtk-3-dev lld
+          llvm clang-15 libfreetype-dev libfuse2 libsdl2-dev
           binutils-mips-linux-gnu python3-pip python3-venv libpng-dev
-
       - name: Install SDL2 Dependencies
         if: runner.os == 'Linux'
         run: |
@@ -52,21 +51,21 @@ jobs:
           CC_CHECK_COMP='ccache gcc' make init
           cp build/us/drmario64_uncompressed.us.z64 ..
           cp build/us/drmario64.us.elf ..
-          
       - name: Build N64Recomp & RSPRecomp
         if: runner.os != 'Windows'
-        run: |
-          git clone https://github.com/Mr-Wiseguy/N64Recomp.git --recurse-submodules N64RecompSource
+        run: >
+          git clone https://github.com/Mr-Wiseguy/N64Recomp.git --recurse-submodules
+          N64RecompSource
           cd N64RecompSource
-          
+
           # enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          
+
           # Build N64Recomp & RSPRecomp
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build
           cmake --build cmake-build --config Release --target N64Recomp -j8
           cmake --build cmake-build --config Release --target RSPRecomp -j8
-          
+
           # Copy N64Recomp & RSPRecomp to root directory
           cp cmake-build/N64Recomp ..
           cp cmake-build/RSPRecomp ..
@@ -75,35 +74,19 @@ jobs:
           ./N64Recomp drmario64.us.toml
           ./RSPRecomp aspMain.us.toml
       - name: Build DrMario64
-        run: |-
+        run: >-
           # enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
                       
           # manual fix
           sed -i '84ipause_self(rdram);' RecompiledFuncs/Idle_ThreadEntry.c
-          
+
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_C_COMPILER=clang-15 -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build
           cmake --build cmake-build --config ${{ matrix.type }} -j8
       - name: Prepare Archive
-        run: |
+        run: >
           ls .
           ls cmake-build
           #mv cmake-build/DrMario64Recompiled DrMario64Recompiled
           #rm -rf assets/scss
           #tar -czf DrMario64Recompiled-${{ runner.os }}-${{ matrix.type }}.tar.gz DrMario64Recompiled assets/
-      #- name: Archive DrMario64Recomp
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: DrMario64Recompiled-${{ runner.os }}-${{ matrix.type }}
-      #    path: DrMario64Recompiled-${{ runner.os }}-${{ matrix.type }}.tar.gz
-
-      #- name: Build DrMario64
-      #  run: |-
-      #    chmod +x .github/linux/appimage.sh
-      #    ./.github/linux/appimage.sh
-          
-      #- name: DrMario64Recomp AppImage
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: DrMario64Recompiled-AppImage
-          path: DrMario64Recompiled-x86_64.AppImage

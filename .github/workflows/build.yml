@@ -32,13 +32,20 @@ jobs:
 
           # Enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-
-          wget https://www.libsdl.org/release/SDL2-2.26.1.tar.gz
-          tar -xzf SDL2-2.26.1.tar.gz
-          cd SDL2-2.26.1
-          ./configure
-          make -j 10
-          sudo make install
+          SDLVER=2.26.1
+          if [[ ! -e ~/.ccache ]]; then
+              mkdir ~/.ccache
+          fi
+          cd ~/.ccache 
+          if [[ ! -e SDL2-${SDLVER} ]]; then
+          	curl -sSLO https://libsdl.org/release/SDL2-${SDLVER}.tar.gz
+          	tar -xzf SDL2-${SDLVER}.tar.gz
+          	cd SDL2-${SDLVER}
+              ./configure
+              make -j8 && cd ../
+              rm SDL2-${SDLVER}.tar.gz
+          fi
+          make -C SDL2-${SDLVER} install
           sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
           echo ::endgroup::
       - name: Clone DrMario_decomp
@@ -47,7 +54,7 @@ jobs:
           cd drmario64_decomp
           # Enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          ls /usr/lib/ccache
+          ls ~/.ccache
           #curl -sSfL ${{ secrets.BASEROM }} -o baserom.us.z64
           #md5sum baserom.us.z64
           #python3 -m pip install --no-cache-dir -r requirements.txt

@@ -45,11 +45,14 @@ jobs:
         run: |-
           git clone https://github.com/AngheloAlf/drmario64 drmario64_decomp
           cd drmario64_decomp
-          curl -sSfL ${{ secrets.BASEROM }} -o baserom.us.z64
-          md5sum baserom.us.z64
-          python3 -m pip install --no-cache-dir -r requirements.txt
-          cargo install pigment64 --version ">=0.3.0,<1.*"
-          make setup && make lib && make extract && make
+          # Enable ccache
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          ls /usr/lib/ccache
+          #curl -sSfL ${{ secrets.BASEROM }} -o baserom.us.z64
+          #md5sum baserom.us.z64
+          #python3 -m pip install --no-cache-dir -r requirements.txt
+          #cargo install pigment64 --version ">=0.3.0,<1.*"
+          #make setup && make lib && make extract && make
           cp build/us/drmario64_uncompressed.us.z64 ..
           cp build/us/drmario64.us.elf ..
       - name: Build N64Recomp & RSPRecomp

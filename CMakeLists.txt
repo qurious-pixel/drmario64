@@ -234,6 +234,13 @@ if (LINUX)
     find_package(SDL2 REQUIRED)
     find_package(X11 REQUIRED)
 
+    # Generate icon_bytes.c from the app icon PNG.
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/icon_bytes.c ${CMAKE_CURRENT_BINARY_DIR}/icon_bytes.h
+        COMMAND file_to_c ${CMAKE_SOURCE_DIR}/icons/512.png icon_bytes ${CMAKE_CURRENT_BINARY_DIR}/icon_bytes.c ${CMAKE_CURRENT_BINARY_DIR}/icon_bytes.h 
+        DEPENDS ${CMAKE_SOURCE_DIR}/icons/512.png
+    )
+    target_sources(drmario64_recomp PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/icon_bytes.c)
+    
     message(STATUS "SDL2_FOUND = ${SDL2_FOUND}")
     message(STATUS "SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS}")
 

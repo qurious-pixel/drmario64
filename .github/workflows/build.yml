@@ -1,6 +1,6 @@
 name: build
 on:
-  push: main
+  push: null
 jobs:
   build-unix:
     runs-on: ubuntu-22.04

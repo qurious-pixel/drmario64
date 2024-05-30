@@ -4,6 +4,8 @@ on:
 jobs:
   build-unix:
     runs-on: ubuntu-22.04
+    env:
+      CCACHE_DIR: ~/.ccache
     strategy:
       matrix:
         type:

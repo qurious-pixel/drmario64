@@ -5,7 +5,7 @@ jobs:
   build-unix:
     runs-on: ubuntu-22.04
     env:
-      CCACHE_DIR: ~/.ccache
+      CCACHE_DIR: /home/runner/work/drmario64/drmario64/.ccache
     strategy:
       matrix:
         type:
@@ -19,7 +19,7 @@ jobs:
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}-z64re-ccache-${{ matrix.type }}
+          key: ${{ runner.os }}-ccache-${{ matrix.type }}
       - name: Install Linux Dependencies
         run: >
           sudo apt-get update && sudo apt install -y ninja-build libgtk-3-dev lld
@@ -30,11 +30,11 @@ jobs:
           # Enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           SDLVER=2.26.1
-          if [[ ! -e ~/.ccache ]]; then
-              mkdir ~/.ccache
+          if [[ ! -e ${{ env.CCACHE_DIR }} ]]; then
+              mkdir ${{ env.CCACHE_DIR }}
           fi
-          cd ~/.ccache
-          ls ~/.ccache
+          cd ${{ env.CCACHE_DIR }}
+          ls ${{ env.CCACHE_DIR }}
           if [[ ! -e SDL2-${SDLVER} ]]; then
           	curl -sSLO https://libsdl.org/release/SDL2-${SDLVER}.tar.gz
           	tar -xzf SDL2-${SDLVER}.tar.gz
@@ -51,12 +51,12 @@ jobs:
           cd drmario64_decomp
           # Enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          ls ~/.ccache
-          if [[ ! -e ~/.ccache/baserom.us.z64 ]]; then
-              curl -sSfL ${{ secrets.BASEROM }} -o ~/.ccache/baserom.us.z64
-              md5sum ~/.ccache/baserom.us.z64
+          ls ${{ env.CCACHE_DIR }}
+          if [[ ! -e ${{ env.CCACHE_DIR }}/baserom.us.z64 ]]; then
+              curl -sSfL ${{ secrets.BASEROM }} -o ${{ env.CCACHE_DIR }}/baserom.us.z64
+              md5sum ${{ env.CCACHE_DIR }}/baserom.us.z64
           fi
-          cp ~/.ccache/baserom.us.z64 .
+          cp ${{ env.CCACHE_DIR }}/baserom.us.z64 .
           python3 -m pip install --no-cache-dir -r requirements.txt
           cargo install pigment64 --version ">=0.3.0,<1.*"
           make setup && make lib && make extract && make
@@ -89,14 +89,12 @@ jobs:
                       
           # manual fix
           sed -i '84i\\tpause_self(rdram);' RecompiledFuncs/Idle_ThreadEntry.c
-          cat RecompiledFuncs/Idle_ThreadEntry.c
 
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_C_COMPILER=clang-15 -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build
           cmake --build cmake-build --parallel
       - name: Prepare Archive
         run: |
           mv cmake-build/drmario64_recomp DrMario64
-          ls .
           rm -rf assets/scss
           tar -czf DrMario64-${{ runner.os }}-${{ matrix.type }}.tar.gz DrMario64 assets/
       - name: Archive DrMario64

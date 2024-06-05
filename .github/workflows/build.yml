@@ -50,6 +50,7 @@ jobs:
         run: |
           git clone https://github.com/AngheloAlf/drmario64 drmario64_decomp
           cd drmario64_decomp
+          git checkout 1258578aea8053cf818cd1dda3e70829747b9ab7
           # Enable ccache
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           ls ${{ env.CCACHE_DIR }}

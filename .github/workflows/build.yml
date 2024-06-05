@@ -1,6 +1,6 @@
 name: build
 on:
-  #push: null
+  push: null
   workflow_dispatch:
 jobs:
   build-unix:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: appimage
+          ref: librecomp
           submodules: recursive
       - name: ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -48,22 +48,25 @@ jobs:
           sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
       - name: Clone DrMario_decomp
         run: |
-          git clone https://github.com/AngheloAlf/drmario64 drmario64_decomp
-          cd drmario64_decomp
-          
-          # Enable ccache
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          ls ${{ env.CCACHE_DIR }}
-          if [[ ! -e ${{ env.CCACHE_DIR }}/baserom.us.z64 ]]; then
-              curl -sSfL ${{ secrets.BASEROM }} -o ${{ env.CCACHE_DIR }}/baserom.us.z64
-              md5sum ${{ env.CCACHE_DIR }}/baserom.us.z64
+          if [[ ! -e ${{ env.CCACHE_DIR }}/drmario64.us.elf ]]; then
+            git clone https://github.com/AngheloAlf/drmario64 drmario64_decomp
+            cd drmario64_decomp
+            # Enable ccache
+            export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+            if [[ ! -e ${{ env.CCACHE_DIR }}/baserom.us.z64 ]]; then
+                curl -sSfL ${{ secrets.BASEROM }} -o ${{ env.CCACHE_DIR }}/baserom.us.z64
+                md5sum ${{ env.CCACHE_DIR }}/baserom.us.z64
+            fi
+            cp ${{ env.CCACHE_DIR }}/baserom.us.z64 .
+            python3 -m pip install --no-cache-dir -r requirements.txt
+            cargo install pigment64 --version ">=0.3.0,<1.*"
+            make setup && make lib && make extract && make
+            cp build/us/drmario64_uncompressed.us.z64 ${{ env.CCACHE_DIR }}/
+            cp build/us/drmario64.us.elf ${{ env.CCACHE_DIR }}/
           fi
-          cp ${{ env.CCACHE_DIR }}/baserom.us.z64 .
-          python3 -m pip install --no-cache-dir -r requirements.txt
-          cargo install pigment64 --version ">=0.3.0,<1.*"
-          make setup && make lib && make extract && make
-          cp build/us/drmario64_uncompressed.us.z64 ..
-          cp build/us/drmario64.us.elf ..
+          ls ${{ env.CCACHE_DIR }}
+          cp ${{ env.CCACHE_DIR }}/drmario64_uncompressed.us.z64 .
+          cp ${{ env.CCACHE_DIR }}/drmario64.us.elf .
       - name: Build N64Recomp & RSPRecomp
         run: |
           git clone https://github.com/Mr-Wiseguy/N64Recomp.git --recurse-submodules N64RecompSource
@@ -92,7 +95,7 @@ jobs:
                       
           # manual fix
           sed -i '84i\\tpause_self(rdram);' RecompiledFuncs/Idle_ThreadEntry.c
-
+      
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.type }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_C_COMPILER=clang-15 -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build
           cmake --build cmake-build --parallel
       - name: Prepare Archive

@@ -4,9 +4,9 @@
 #include <vector>
 #include <filesystem>
 
-#include "recomp.h"
-#include "../ultramodern/ultramodern.hpp"
-#include "rt64_layer.h"
+#include "librecomp/recomp.h"
+#include "ultramodern/ultramodern.hpp"
+#include "ultramodern/rt64_layer.hpp"
 
 namespace recomp {
 	enum class Game {

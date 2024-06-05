@@ -16,3 +16,6 @@
 [submodule "lib/freetype-windows-binaries"]
 	path = lib/freetype-windows-binaries
 	url = https://github.com/ubawurinna/freetype-windows-binaries
+[submodule "lib/N64ModernRuntime"]
+	path = lib/N64ModernRuntime
+	url = https://github.com/N64Recomp/N64ModernRuntime.git

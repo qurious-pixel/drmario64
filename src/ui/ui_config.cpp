@@ -4,10 +4,10 @@
 #include "recomp_config.h"
 #include "recomp_debug.h"
 #include "promptfont.h"
-#include "../../ultramodern/config.hpp"
-#include "../../ultramodern/ultramodern.hpp"
+#include "ultramodern/config.hpp"
+#include "ultramodern/ultramodern.hpp"
 #include "RmlUi/Core.h"
-#include "rt64_layer.h"
+#include "ultramodern/rt64_layer.hpp"
 
 ultramodern::GraphicsConfig new_options;
 Rml::DataModelHandle nav_help_model_handle;

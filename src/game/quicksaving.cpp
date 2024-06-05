@@ -2,9 +2,9 @@
 
 #if 0
 
-#include "recomp_helpers.h"
+#include "librecomp/helpers.hpp"
 #include "recomp_input.h"
-#include "../ultramodern/ultramodern.hpp"
+#include "ultramodern/ultramodern.hpp"
 
 enum class QuicksaveAction {
     None,

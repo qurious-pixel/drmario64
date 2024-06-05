@@ -7,12 +7,12 @@
 
 #include "recomp_ui.h"
 #include "recomp_input.h"
-#include "recomp_game.h"
+#include "librecomp/game.hpp"
 #include "ui_rml_hacks.hpp"
 
 #include "concurrentqueue.h"
 
-#include "rt64_layer.h"
+#include "ultramodern/rt64_layer.hpp"
 #include "rt64_render_hooks.h"
 #include "rt64_render_interface_builders.h"
 

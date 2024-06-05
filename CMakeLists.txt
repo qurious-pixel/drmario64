@@ -35,19 +35,26 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/lib/lunasvg)
 SET(ENABLE_SVG_PLUGIN ON CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/lib/RmlUi)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime)
+
 target_include_directories(rt64 PRIVATE ${CMAKE_BINARY_DIR}/rt64/src)
 
 # RecompiledFuncs - Library containing the primary recompiler output
 add_library(RecompiledFuncs STATIC)
 
 target_compile_options(RecompiledFuncs PRIVATE
-    # -Wno-unused-but-set-variable
+    -Wno-unused-but-set-variable
+    -Wno-unused-variable
+    -Wno-implicit-function-declaration
     -fno-strict-aliasing
     -ggdb
 )
 
 target_include_directories(RecompiledFuncs PRIVATE
     ${CMAKE_SOURCE_DIR}/include/
+    ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/ultramodern/include
+    ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/librecomp/include
+    ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/librecomp/include/librecomp # temporary while N64Recomp gets updated    
 )
 
 file(GLOB FUNC_C_SOURCES ${CMAKE_SOURCE_DIR}/RecompiledFuncs/*.c)
@@ -108,38 +115,10 @@ add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/patches/patches.bin
 add_executable(drmario64_recomp)
 
 set (SOURCES
-    ${CMAKE_SOURCE_DIR}/ultramodern/audio.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/events.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/mesgqueue.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/misc_ultra.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/port_main.c
-    ${CMAKE_SOURCE_DIR}/ultramodern/scheduling.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/threadqueue.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/task_win32.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/threads.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/timer.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/ultrainit.cpp
-    ${CMAKE_SOURCE_DIR}/ultramodern/rt64_layer.cpp
-
-    ${CMAKE_SOURCE_DIR}/src/recomp/ai.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/cont.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/dp.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/eep.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/euc-jp.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/flash.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/math_routines.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/overlays.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/pak.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/pi.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/ultra_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/ultra_translation.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/print.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/recomp.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/sp.cpp
-    ${CMAKE_SOURCE_DIR}/src/recomp/vi.cpp
-
     ${CMAKE_SOURCE_DIR}/src/main/main.cpp
-
+    #${CMAKE_SOURCE_DIR}/src/main/register_overlays.cpp
+    #${CMAKE_SOURCE_DIR}/src/main/register_patches.cpp
+    
     ${CMAKE_SOURCE_DIR}/src/game/input.cpp
     ${CMAKE_SOURCE_DIR}/src/game/controls.cpp
     ${CMAKE_SOURCE_DIR}/src/game/config.cpp
@@ -163,7 +142,6 @@ set (SOURCES
 
 target_include_directories(drmario64_recomp PRIVATE
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/include/librecomp
     ${CMAKE_SOURCE_DIR}/lib/concurrentqueue
     ${CMAKE_SOURCE_DIR}/lib/GamepadMotionHelpers
     ${CMAKE_SOURCE_DIR}/lib/RmlUi/Include
@@ -178,10 +156,12 @@ target_include_directories(drmario64_recomp PRIVATE
     ${CMAKE_SOURCE_DIR}/lib/rt64/src/contrib/nativefiledialog-extended/src/include
     ${CMAKE_BINARY_DIR}/shaders
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_SOURCE_DIR}/lib/N64ModernRuntime/librecomp/include/librecomp # temporary while N64Recomp gets updated
 )
 
 target_compile_options(drmario64_recomp PRIVATE
     -march=nehalem
+    -Wno-unused-but-set-variable
     -fno-strict-aliasing
     -fms-extensions
     -ggdb
@@ -231,7 +211,7 @@ if (WIN32)
     target_sources(drmario64_recomp PRIVATE ${CMAKE_SOURCE_DIR}/icons/app.rc)
 endif()
 
-if (LINUX)
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     find_package(SDL2 REQUIRED)
     find_package(X11 REQUIRED)
 
@@ -275,6 +255,8 @@ target_link_libraries(drmario64_recomp PRIVATE
 #    PatchesLib
     RecompiledFuncs
     SDL2
+    librecomp
+    ultramodern
     rt64
 #    RmlCore
     rmlui

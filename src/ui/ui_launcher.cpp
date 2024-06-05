@@ -1,7 +1,7 @@
 #include "recomp_ui.h"
 #include "recomp_config.h"
-#include "recomp_game.h"
-#include "../../ultramodern/ultramodern.hpp"
+#include "librecomp/game.hpp"
+#include "ultramodern/ultramodern.hpp"
 #include "RmlUi/Core.h"
 #include "nfd.h"
 #include <filesystem>
@@ -10,6 +10,8 @@ std::string version_number = "v1.0.0";
 
 Rml::DataModelHandle model_handle;
 bool mm_rom_valid = false;
+
+extern std::vector<recomp::GameEntry> supported_games;
 
 void select_rom() {
 	nfdnchar_t* native_path = nullptr;
@@ -21,39 +23,39 @@ void select_rom() {
 		NFD_FreePathN(native_path);
 		native_path = nullptr;
 
-		recomp::RomValidationError rom_error = recomp::select_rom(path, recomp::Game::MM);
-
-		switch (rom_error) {
-			case recomp::RomValidationError::Good:
-				mm_rom_valid = true;
-				model_handle.DirtyVariable("mm_rom_valid");
-				break;
-			case recomp::RomValidationError::FailedToOpen:
-				recomp::message_box("Failed to open ROM file.");
-				break;
-			case recomp::RomValidationError::NotARom:
-				recomp::message_box("This is not a valid ROM file.");
-				break;
-			case recomp::RomValidationError::IncorrectRom:
-				recomp::message_box("This ROM is not the correct game.");
-				break;
-			case recomp::RomValidationError::NotYet:
-				recomp::message_box("This game isn't supported yet.");
-				break;
-			case recomp::RomValidationError::IncorrectVersion:
-				recomp::message_box("This ROM is the correct game, but the wrong version.\nThis project requires the NTSC-U N64 version of the game.");
-				break;
-			case recomp::RomValidationError::OtherError:
-				recomp::message_box("An unknown error has occurred.");
-				break;
-		}
-	}
+		recomp::RomValidationError rom_error = recomp::select_rom(path, supported_games[0].game_id);
+        switch (rom_error) {
+            case recomp::RomValidationError::Good:
+                mm_rom_valid = true;
+                model_handle.DirtyVariable("mm_rom_valid");
+                break;
+            case recomp::RomValidationError::FailedToOpen:
+                recomp::message_box("Failed to open ROM file.");
+                break;
+            case recomp::RomValidationError::NotARom:
+                recomp::message_box("This is not a valid ROM file.");
+                break;
+            case recomp::RomValidationError::IncorrectRom:
+                recomp::message_box("This ROM is not the correct game.");
+                break;
+            case recomp::RomValidationError::NotYet:
+                recomp::message_box("This game isn't supported yet.");
+                break;
+            case recomp::RomValidationError::IncorrectVersion:
+                recomp::message_box(
+                        "This ROM is the correct game, but the wrong version.\nThis project requires the NTSC-U N64 version of the game.");
+                break;
+            case recomp::RomValidationError::OtherError:
+                recomp::message_box("An unknown error has occurred.");
+                break;
+        }
+    }
 }
 
 class LauncherMenu : public recomp::MenuController {
 public:
     LauncherMenu() {
-		mm_rom_valid = recomp::is_rom_valid(recomp::Game::MM);
+		mm_rom_valid = recomp::is_rom_valid(supported_games[0].game_id);
     }
 	~LauncherMenu() override {
 
@@ -75,7 +77,7 @@ public:
 		);
 		recomp::register_event(listener, "start_game",
 			[](const std::string& param, Rml::Event& event) {
-				recomp::start_game(recomp::Game::MM);
+				recomp::start_game(supported_games[0].game_id);
 				recomp::set_current_menu(recomp::Menu::None);
 			}
 		);

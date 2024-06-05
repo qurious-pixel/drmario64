@@ -1,12 +1,12 @@
 #include <atomic>
 #include <mutex>
 
-#include "../ultramodern/ultramodern.hpp"
-#include "recomp.h"
+#include "ultramodern/ultramodern.hpp"
+#include "librecomp/recomp.h"
 #include "recomp_input.h"
 #include "recomp_ui.h"
 #include "SDL.h"
-#include "rt64_layer.h"
+#include "ultramodern/rt64_layer.hpp"
 #include "promptfont.h"
 #include "GamepadMotion.hpp"
 

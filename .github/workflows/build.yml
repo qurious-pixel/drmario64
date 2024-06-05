@@ -1,6 +1,6 @@
 name: build
 on:
-  push: null
+  #push: null
   workflow_dispatch:
 jobs:
   build-unix:

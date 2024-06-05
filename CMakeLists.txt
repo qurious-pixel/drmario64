@@ -47,7 +47,7 @@ target_compile_options(RecompiledFuncs PRIVATE
 )
 
 target_include_directories(RecompiledFuncs PRIVATE
-    ${CMAKE_SOURCE_DIR}/include/librecomp
+    ${CMAKE_SOURCE_DIR}/include/
 )
 
 file(GLOB FUNC_C_SOURCES ${CMAKE_SOURCE_DIR}/RecompiledFuncs/*.c)
@@ -163,6 +163,7 @@ set (SOURCES
 
 target_include_directories(drmario64_recomp PRIVATE
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/librecomp
     ${CMAKE_SOURCE_DIR}/lib/concurrentqueue
     ${CMAKE_SOURCE_DIR}/lib/GamepadMotionHelpers
     ${CMAKE_SOURCE_DIR}/lib/RmlUi/Include

@@ -47,7 +47,7 @@ target_compile_options(RecompiledFuncs PRIVATE
 )
 
 target_include_directories(RecompiledFuncs PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/librecomp
 )
 
 file(GLOB FUNC_C_SOURCES ${CMAKE_SOURCE_DIR}/RecompiledFuncs/*.c)

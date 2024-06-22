@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=DrMario64
+Type=Application
+Terminal=false
+Icon=DrMario64
+Exec=DrMario64
+GenericName=DrMario64
+Categories=Game;
+
